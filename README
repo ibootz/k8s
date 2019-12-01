@@ -1,0 +1,17 @@
+1. 服务器规划
+--角色		--IP			--组件
+master1		192.168.199.211		kube-apiserver,kube-controller-manager,kube-scheduler,etcd1
+master2		192.168.199.212		kube-apiserver,kube-controller-manager,kube-scheduler,etcd2
+node1		192.168.199.213		docker,kubelet,kube-proxy,flannel,etcd3
+node2		192.168.199.214		docker,kubelet,kube-proxy,flannel
+LB(master)	192.168.199.211		nginx L4
+LB(backup)	192.168.199.212		nginx L4
+Registry	192.168.199.214		harbor
+
+2. 证书规划（所有服务器采用同一套ca证书认证分发配置）
+etcd			ca.pem, server.pem, server-key.pem
+flannel			ca.pem, server.pem, server-key.pem
+kube-apiserver		ca.pem, server.pem, server-key.pem
+kubelet			ca.pem, ca-key.pem
+kube-proxy		ca.pem, kube-proxy.pem, kube-proxy-key.pem
+kubectl			ca.pem, admin.pem, admin-key.pem
