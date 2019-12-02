@@ -29,7 +29,7 @@ net.ipv4.ip_forward = 1
 vm.swappiness=0
 EOF
 sysctl --system > /dev/null
-echo 'vm.min_free_kbytes=5000000' >> /etc/sysctl.conf
+echo 'vm.min_free_kbytes=102400' >> /etc/sysctl.conf
 sysctl -p
 
 echo "修改文件句柄数"
