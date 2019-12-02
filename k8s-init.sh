@@ -3,8 +3,8 @@
 
 echo "清空防火墙规则，并关闭防火墙"
 iptables -F
-systemctl stop firewalld
-systemctl disable firewalld
+systemctl stop firewalld > /dev/null
+systemctl disable firewalld > /dev/null
 
 echo "关闭selinux"
 setenforce 0
@@ -53,7 +53,7 @@ modprobe -- ip_vs_wrr
 modprobe -- ip_vs_sh
 modprobe -- nf_conntrack
 EOF
-chmod 755 /etc/sysconfig/modules/ipvs.modules && bash /etc/sysconfig/modules/ipvs.modules
+chmod 755 /etc/sysconfig/modules/ipvs.modules && bash /etc/sysconfig/modules/ipvs.modules > /dev/null
 lsmod | grep -e ip_vs -e nf_conntrack
 
 echo "添加hosts"
