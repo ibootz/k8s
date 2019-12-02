@@ -1,52 +1,71 @@
 #!/bin/bash
-
 #该脚本用于在安装k8s集群之前做一些必要的系统优化和设置
 
-read -p "请确认是否已经修改待部署机器的主机名（192.168.199.211：master1\n192.168.199.212 master2\n192.168.199.213 node1\n192.168.199.214 node2）:" rs
-if [ $rs != 'yes' -a $rs != 'y' -a $rs != 'YES' -a $rs != 'Y' ];then
-  echo "脚本退出执行"
-  exit
-fi
-
-read -p "请确认系统是否已经安装最新版Docker：" rs1
-if [ $rs1 != 'yes' -a $rs1 != 'y' -a $rs1 != 'YES' -a $rs1 != 'Y' ];then
-  echo "脚本退出执行"
-  exit
-fi
-
-echo "1. 清空防火墙规则"
+echo "清空防火墙规则，并关闭防火墙"
 iptables -F
+systemctl stop firewalld
+systemctl disable firewalld
 
-echo "2. 关闭selinux"
-sed -i 's/enforcing/disabled/' /etc/selinux/config
+echo "关闭selinux"
 setenforce 0
+sed -i 's/enforcing/disabled/' /etc/selinux/config
 
-echo "3. 关闭swap"
+echo "关闭swap"
 swapoff -a
 sed -i 's/.*swap.*/#&/' /etc/fstab
 echo "vm.swappiness = 0">> /etc/sysctl.conf
 sysctl -p > /dev/null
 
-echo "4. 同步系统时间"
+echo "同步系统时间"
 yum -y install ntpdate &> /dev/null
 ntpdate time.windows.com > /dev/null
 
-echo "5. 优化内核参数"
+echo "优化内核参数"
 cat <<EOF > /etc/sysctl.d/k8s.conf
 net.bridge.bridge-nf-call-ip6tables = 1
 net.bridge.bridge-nf-call-iptables = 1
+net.ipv4.ip_nonlocal_bind = 1
+net.ipv4.ip_forward = 1
+vm.swappiness=0
 EOF
 sysctl --system > /dev/null
+echo 'vm.min_free_kbytes=5000000' >> /etc/sysctl.conf
+sysctl -p
 
-echo "6. 添加hosts"
+echo "修改文件句柄数"
+cat <<EOF >>/etc/security/limits.conf
+soft nofile 65536
+hard nofile 65536
+soft nproc 65536
+hard nproc 65536
+soft memlock unlimited
+hard memlock unlimited
+EOF
+
+echo "安装ipvs"
+yum install ipvsadm ipset sysstat conntrack libseccomp -y > /dev/null
+#开机加载内核模块，并设置开机自动加载
+cat > /etc/sysconfig/modules/ipvs.modules <<EOF
+#!/bin/bash
+modprobe -- ip_vs
+modprobe -- ip_vs_rr
+modprobe -- ip_vs_wrr
+modprobe -- ip_vs_sh
+modprobe -- nf_conntrack_ipv4
+EOF
+chmod 755 /etc/sysconfig/modules/ipvs.modules && bash /etc/sysconfig/modules/ipvs.modules
+lsmod | grep -e ip_vs -e nf_conntrack_ipv4
+
+
+echo "添加hosts"
 cat >> /etc/hosts <<EOF
-192.168.199.211 master1
-192.168.199.212 master2
-192.168.199.213 node1
+192.168.199.211 master1 etcd1
+192.168.199.212 master2 etcd2
+192.168.199.213 node1 etcd3
 192.168.199.214 node2
 EOF
 
-echo "7. 配置k8s国内源"
+echo "配置k8s国内源"
 cat <<EOF > /etc/yum.repos.d/kubernetes.repo
 [kubernetes]
 name=Kubernetes
@@ -58,9 +77,8 @@ gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg https://mirrors
 EOF
 yum clean all &> /dev/null
 yum makecache fast &> /dev/null
-yum -y update &> /dev/null
 
-echo "8. 修改docker全局配置"
+echo "修改docker全局配置"
 cat > /etc/docker/daemon.json <<EOF
 {
   "registry-mirrors": ["https://52emalvj.mirror.aliyuncs.com"],

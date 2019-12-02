@@ -1,5 +1,9 @@
 #!/bin/bash
 
+if [ -z "$1" ];then
+  echo "请指定etcd_name"
+fi
+
 ETCD_NAME=$1
 ETCD_HOST=$(hostname -i)
 ETCD_CFG=/etc/kubernetes/cfg
