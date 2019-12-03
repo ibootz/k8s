@@ -6,7 +6,7 @@ if [ -z "$1" ];then
 fi
 
 read -p "请确认是否将相关证书添加到/etc/kubernetes/ssl目录中?" rs
-if [ $rs != 'y' -o $rs != 'Y' -o $rs != 'YES' -o $rs != 'yes' ];then
+if [ $rs != 'y' -a $rs != 'Y' -a $rs != 'YES' -a $rs != 'yes' ];then
   echo "程序终止执行"
   exit
 fi
