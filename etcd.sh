@@ -2,6 +2,7 @@
 
 if [ -z "$1" ];then
   echo "请指定etcd_name"
+  exit
 fi
 
 read -p "请确认是否将相关证书添加到/etc/kubernetes/ssl目录中?" rs
