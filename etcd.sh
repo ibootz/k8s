@@ -12,12 +12,16 @@ if [ $rs != 'y' -a $rs != 'Y' -a $rs != 'YES' -a $rs != 'yes' ];then
 fi
 
 ETCD_NAME=$1
+# 第一个节点启动时，传new；后续其他节点传existing
+ETCD_INITIAL_CLUSTER_STATE=$2
 ETCD_HOST=$(hostname -i)
 ETCD_CFG=/etc/kubernetes/cfg
 ETCD_SSL=/etc/kubernetes/ssl
 
-# 生成配置文件
-mkdir -p $ETCD_CFG
+echo "生成配置文件"
+if [ ! -d "$ETCD_CFG" ];then
+  mkdir -p $ETCD_CFG
+fi
 rm -rf $ETCD_CFG/etcd.conf
 cat > $ETCD_CFG/etcd.conf <<EOF
 #[Member]
@@ -31,20 +35,20 @@ ETCD_INITIAL_ADVERTISE_PEER_URLS="https://$ETCD_HOST:2380"
 ETCD_ADVERTISE_CLIENT_URLS="https://$ETCD_HOST:2379"
 ETCD_INITIAL_CLUSTER="etcd1=https://192.168.199.211:2380,etcd2=https://192.168.199.212:2380,etcd3=https://192.168.199.213:2380"
 ETCD_INITIAL_CLUSTER_TOKEN="etcd-cluster"
-ETCD_INITIAL_CLUSTER_STATE="new"
+ETCD_INITIAL_CLUSTER_STATE="$ETCD_INITIAL_CLUSTER_STATE"
 ETCD_ENABLE_V2="true"
 EOF
 
-#复制证书文件到指定目录
-if [ ! -d "$ETCD_SSL"  ];then
+echo "复制证书文件到指定目录"
+if [ ! -d "$ETCD_SSL" ];then
   mkdir -p $ETCD_SSL
 fi
 /bin/cp -rf ./cert/server*.pem $ETCD_SSL
 /bin/cp -rf ./cert/ca.pem $ETCD_SSL
 
-#生成启动文件
-systemctl stop etcd.service
-systemctl disable etcd.service
+echo "生成启动文件"
+systemctl stop etcd.service &> /dev/null
+systemctl disable etcd.service &> /dev/null
 rm -rf /etc/systemd/system/etcd.service 
 rm -rf /var/lib/etcd
 mkdir -p /var/lib/etcd
