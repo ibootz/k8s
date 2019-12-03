@@ -35,6 +35,13 @@ ETCD_INITIAL_CLUSTER_STATE="new"
 ETCD_ENABLE_V2="true"
 EOF
 
+#复制证书文件到指定目录
+if [ ! -d "$ETCD_SSL"  ];then
+  mkdir -p $ETCD_SSL
+fi
+/bin/cp -rf ./cert/server*.pem $ETCD_SSL
+/bin/cp -rf ./cert/ca.pem $ETCD_SSL
+
 #生成启动文件
 systemctl stop etcd.service
 systemctl disable etcd.service
