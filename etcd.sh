@@ -12,8 +12,6 @@ if [ $rs != 'y' -a $rs != 'Y' -a $rs != 'YES' -a $rs != 'yes' ];then
 fi
 
 ETCD_NAME=$1
-# 第一个节点启动时，传new；后续其他节点传existing
-ETCD_INITIAL_CLUSTER_STATE=$2
 ETCD_HOST=$(hostname -i)
 ETCD_CFG=/etc/kubernetes/cfg
 ETCD_SSL=/etc/kubernetes/ssl
@@ -35,7 +33,7 @@ ETCD_INITIAL_ADVERTISE_PEER_URLS="https://$ETCD_HOST:2380"
 ETCD_ADVERTISE_CLIENT_URLS="https://$ETCD_HOST:2379"
 ETCD_INITIAL_CLUSTER="etcd1=https://192.168.199.211:2380,etcd2=https://192.168.199.212:2380,etcd3=https://192.168.199.213:2380"
 ETCD_INITIAL_CLUSTER_TOKEN="etcd-cluster"
-ETCD_INITIAL_CLUSTER_STATE="$ETCD_INITIAL_CLUSTER_STATE"
+ETCD_INITIAL_CLUSTER_STATE="new"
 ETCD_ENABLE_V2="true"
 EOF
 
