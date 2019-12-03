@@ -4,6 +4,12 @@ if [ -z "$1" ];then
   echo "请指定etcd_name"
 fi
 
+read -p "请确认是否将相关证书添加到/etc/kubernetes/ssl目录中?" rs
+if [ $rs != 'y' -o $rs != 'Y' -o $rs != 'YES' -o $rs != 'yes' ];then
+  echo "程序终止执行"
+  exit
+fi
+
 ETCD_NAME=$1
 ETCD_HOST=$(hostname -i)
 ETCD_CFG=/etc/kubernetes/cfg
