@@ -25,7 +25,7 @@ cat <<EOF > bootstrap-token.csv
 EOF
 
 echo "将加密文件拷贝到其他master节点"
-yum install -y sshpass
+yum install -y sshpass > /dev/null
 /bin/cp encryption-config.yaml bootstrap-token.csv /etc/kubernetes/ssl
 sshpass -p 1990912 scp encryption-config.yaml bootstrap-token.csv root@192.168.199.212:/etc/kubernetes/ssl
 
@@ -92,16 +92,16 @@ kubectl create clusterrolebinding kube-apiserver:kubelet-apis --clusterrole=syst
 kubectl describe clusterrole system:kubelet-api-admin
 
 
-echo "检查api-server和集群状态"
-echo "netstat -ptln | grep kube-apiserver  ==>"
+echo -e "\n检查api-server和集群状态"
+echo "netstat -ptln | grep kube-apiserve  ==>"
 netstat -ptln | grep kube-apiserve
 
-echo "kubectl cluster-info  ==>"
+echo -e "\nkubectl cluster-info  ==>"
 kubectl cluster-info
 
-echo "kubectl get all --all-namespaces  ==>"
+echo -e "\nkubectl get all --all-namespaces  ==>"
 kubectl get all --all-namespaces
 
-echo "kubectl get componentstatuses  ==>"
+echo -e "\nkubectl get componentstatuses  ==>"
 kubectl get componentstatuses
 
