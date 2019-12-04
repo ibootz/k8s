@@ -34,12 +34,12 @@ sysctl -p
 
 echo "修改文件句柄数"
 cat <<EOF >>/etc/security/limits.conf
-soft nofile 65536
-hard nofile 65536
-soft nproc 65536
-hard nproc 65536
-soft memlock unlimited
-hard memlock unlimited
+* soft nofile 65536
+* hard nofile 65536
+* soft nproc 65536
+* hard nproc 65536
+* soft memlock unlimited
+* hard memlock unlimited
 EOF
 
 echo "安装ipvs"
