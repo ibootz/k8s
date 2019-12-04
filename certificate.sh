@@ -46,7 +46,7 @@ cfssl gencert -initca cert/ca-csr.json | cfssljson -bare cert/ca
 
 #------------------------------------------------------------------
 
-# 生成server证书和私钥,供etcd,flannel,kube-apiserver使用
+# 生成server证书和私钥,供etcd,kube-apiserver使用
 cat > cert/server-csr.json <<EOF
 {
     "CN": "kubernetes",
@@ -86,7 +86,7 @@ cfssl gencert -ca=cert/ca.pem -ca-key=cert/ca-key.pem -config=cert/ca-config.jso
 
 #------------------------------------------------------------------
 
-# 生成admin证书和私钥,供kubectl使用
+# 生成admin证书和私钥,供kubectl, flannel使用
 cat > cert/admin-csr.json <<EOF
 {
   "CN": "admin",
