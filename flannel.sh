@@ -28,10 +28,11 @@ Before=docker.service
 [Service]
 Type=notify
 ExecStart=/usr/local/bin/flanneld \
+  -ip-masq \
+  -etcd-endpoints=https://192.168.199.211:2379,https://192.168.199.212:2379,https://192.168.199.213:2379 \
   -etcd-cafile=/etc/kubernetes/ssl/ca.pem \
   -etcd-certfile=/etc/kubernetes/ssl/admin.pem \
   -etcd-keyfile=/etc/kubernetes/ssl/admin-key.pem \
-  -etcd-endpoints=https://192.168.199.211:2379,https://192.168.199.212:2379,https://192.168.199.213:2379 \
   -etcd-prefix=/kubernetes/network
 ExecStartPost=/usr/local/bin/mk-docker-opts.sh -k DOCKER_NETWORK_OPTIONS -d /run/flannel/docker
 Restart=on-failure
@@ -55,7 +56,7 @@ echo "ip add | grep flannel ==>"
 ip add | grep flannel
 
 echo "配置docker支持flannel"
-sed -i '/^EnvironmentFile.*/d;s/ $DOCKER_NETWORK_OPTIONS//;s/ExecStart.*/& $DOCKER_NETWORK_OPTIONS/;/ExecStart/i\EnvironmentFile=/run/flannel/docker' /etc/systemd/system/multi-user.target.wants/docker.service
+sed -i '/^EnvironmentFile.*/d;s/ $DOCKER_NETWORK_OPTIONS//;s/ExecStart.*/& $DOCKER_NETWORK_OPTIONS/;/ExecStart/i\EnvironmentFile=/run/flannel/docker' /lib/systemd/system/docker.service
 systemctl daemon-reload && systemctl restart docker && systemctl status docker
 echo "ip add | grep docker ==>"
 ip add | grep docker
