@@ -56,6 +56,11 @@ if [ -z "$PRIORITY" ];then
   exit
 fi
 
+if [ -z "$UNICAST_PEER" ];then
+  echo "请指定其他节点的ip"
+  exit
+fi
+
 yum install -y keepalived
 cat <<EOF > /etc/keepalived/keepalived.conf
 global_defs {
