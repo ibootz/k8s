@@ -55,7 +55,8 @@ cat > cert/server-csr.json <<EOF
       "192.168.199.211",
       "192.168.199.212",
       "192.168.199.213",
-      "10.10.10.1",
+      "192.168.199.200",
+      "10.254.0.1",
       "kubernetes",
       "kubernetes.default",
       "kubernetes.default.svc",
@@ -79,7 +80,7 @@ cat > cert/server-csr.json <<EOF
 EOF
 
 # CN(Common Name):后续kube-apiserver组件将从证书中提取该字段作为请求的用户名；
-# hosts:localhost地址 + master部署节点的ip地址 + etcd节点的部署地址 + 负载均衡指定的虚拟ip地址(10.10.10.1) + k8s默认带的一些地址
+# hosts:localhost地址 + master部署节点的ip地址 + etcd节点的部署地址 + 负载均衡指定的虚拟ip地址(192.168.199.200) + service ip段的第一个合法地址(10.254.0.1) + k8s默认指定的一些地址
 # O(Organtzation):后续kube-apiserver组件将从证书中提取该字段作为请求的用户所属的用户组；
 
 cfssl gencert -ca=cert/ca.pem -ca-key=cert/ca-key.pem -config=cert/ca-config.json -profile=kubernetes cert/server-csr.json | cfssljson -bare cert/server
