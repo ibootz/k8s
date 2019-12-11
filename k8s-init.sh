@@ -95,8 +95,12 @@ EOF
 systemctl daemon-reload
 systemctl restart docker
 
-echo "9. 生成证书（手动）"
+echo "生成证书（手动）"
 
-echo "10. 安装etcd集群（手动）"
+echo "安装etcd集群（手动）"
 
-echo "11. 安装k8s各组件（手动）"
+echo "安装flannel组件，并设置 CNI 插件支持 flannel"
+
+echo "部署 keepalived+haproxy"
+
+echo "安装k8s各组件（手动）"
