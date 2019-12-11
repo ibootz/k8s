@@ -2,12 +2,9 @@
 
 if [ ! -f /usr/local/bin/kubectl ];then
   echo "拷贝kubernetes-server相关二进制命令到/usr/local/bin"
-  cd ./lib
-  tar zxvf kubernetes-server-linux-amd64.tar.gz
-  cd kubernetes/server/bin
-  cp kube-apiserver kubeadm kube-controller-manager kubectl kube-scheduler /usr/local/bin
-  rm -rf kubernetes
-  cd ..
+  tar zxvf ./lib/kubernetes-server-linux-amd64.tar.gz
+  /bin/cp  ./kubernetes/server/bin/{kube-apiserver,kubeadm,kube-controller-manager,kubectl,kube-scheduler} /usr/local/bin
+  rm -rf ./kubernetes
 fi
 
 echo "复制证书到/etc/kubernetes/ssl"
