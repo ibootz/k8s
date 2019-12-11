@@ -62,6 +62,7 @@ if [ -z "$UNICAST_PEER" ];then
 fi
 
 yum install -y keepalived
+/bin/cp check_apiserver.sh /etc/keepalived/
 cat <<EOF > /etc/keepalived/keepalived.conf
 global_defs {
    router_id LVS_k8s
@@ -70,7 +71,7 @@ global_defs {
 }
 
 vrrp_script CheckK8sMaster {
-    script "curl -k https://192.168.199.200:8443"
+    script "/etc/keepalived/check_apiserver.sh"
     interval 3
     timeout 9
     fall 2

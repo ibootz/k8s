@@ -26,8 +26,10 @@ EOF
 
 echo "将加密文件拷贝到其他master节点"
 yum install -y sshpass > /dev/null
-/bin/cp encryption-config.yaml bootstrap-token.csv /etc/kubernetes/ssl
-sshpass -p 1990912 scp encryption-config.yaml bootstrap-token.csv root@192.168.199.212:/etc/kubernetes/ssl
+/bin/cp encryption-config.yaml bootstrap-token.csv /etc/kubernetes/cfg
+# sshpass -p 1990912 scp encryption-config.yaml bootstrap-token.csv root@192.168.199.212:/etc/kubernetes/cfg
+rm -rf encryption-config.yaml bootstrap-token.csv
+
 
 echo "创建kube-apiserver.service文件"
 cat > /etc/systemd/system/kube-apiserver.service << EOF
@@ -40,7 +42,7 @@ After=network.target
 ExecStart=/usr/local/bin/kube-apiserver \
   --enable-admission-plugins=NamespaceLifecycle,NodeRestriction,LimitRanger,ServiceAccount,DefaultStorageClass,ResourceQuota \
   --anonymous-auth=false \
-  --encryption-provider-config=/etc/kubernetes/ssl/encryption-config.yaml \
+  --encryption-provider-config=/etc/kubernetes/cfg/encryption-config.yaml \
   --advertise-address=0.0.0.0 \
   --bind-address=0.0.0.0 \
   --secure-port=6443 \
