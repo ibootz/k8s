@@ -93,7 +93,6 @@ kubectl create clusterrolebinding kube-apiserver:kubelet-apis --clusterrole=syst
 #预定义的ClusterRole system:kubelet-api-admin授予访问kubelet所有 API 的权限：
 kubectl describe clusterrole system:kubelet-api-admin
 
-
 echo -e "\n检查api-server和集群状态"
 echo "netstat -ptln | grep kube-apiserve  ==>"
 netstat -ptln | grep kube-apiserve

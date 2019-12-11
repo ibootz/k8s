@@ -1,8 +1,13 @@
 #!/bin/bash
 
 if [ ! -f /usr/local/bin/kubectl ];then
-  echo "请确认/usr/local/bin文件夹中是否存在kube-apiserver,kubeadm,kube-controller-manager,kubectl,kube-scheduler等文件"
-  exit
+  echo "拷贝kubernetes-server相关二进制命令到/usr/local/bin"
+  cd ./lib
+  tar zxvf kubernetes-server-linux-amd64.tar.gz
+  cd kubernetes/server/bin
+  cp kube-apiserver kubeadm kube-controller-manager kubectl kube-scheduler /usr/local/bin
+  rm -rf kubernetes
+  cd ..
 fi
 
 echo "复制证书到/etc/kubernetes/ssl"
