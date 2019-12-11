@@ -86,6 +86,7 @@ mkdir -p /var/log/kubernetes
 
 systemctl daemon-reload && systemctl enable kube-apiserver && systemctl start kube-apiserver && systemctl status kube-apiserver
 
+sleep 5
 echo "授予kubernetes证书访问kubelet api权限"
 #在执行kubectl exec、run、logs 等命令时，apiserver会转发到kubelet。这里定义 RBAC规则，授权apiserver调用kubelet API"
 kubectl create clusterrolebinding kube-apiserver:kubelet-apis --clusterrole=system:kubelet-api-admin --user kubernetes
