@@ -15,6 +15,11 @@ if [ ! -d "$K8S_SSL" ];then
 fi
 /bin/cp ./cert/ca.pem ./cert/admin*.pem $K8S_SSL
 
+if [ ! -f /usr/local/bin/flanneld ];then
+  echo "请将flannel二进制包解压到/usr/local/bin"
+  exit
+fi
+
 echo "创建flannel.service文件"
 cat > /etc/systemd/system/flannel.service << EOF
 [Unit]
